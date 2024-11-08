@@ -1,7 +1,11 @@
 package br.com.duxusdesafio.service;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -176,8 +180,6 @@ public class ApiService {
 				}).orElse(Collections.emptyMap()); // .orElse significa CASO NÃO! neste caso me retorna o um map vazio
 
 	}
-
-
 
 
 	/**
