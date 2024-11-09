@@ -88,11 +88,13 @@ public class ApiService {
 			}
 		}
 
-		List<String> nomesJogadores = timeMaisComum.getComposicaoTime().stream()//usando o metodo strem para mapear a composicaoTime
-				.map(comp -> comp.getIntegrante().getNome()) // Mapeia para o nome dos jogadores
-				.collect(Collectors.toList()); // Coleta os nomes em uma lista por padrao
+		List<String> nomesJogadores; // Coleta os nomes em uma lista por padrao
+        assert timeMaisComum != null;
+        nomesJogadores = timeMaisComum.getComposicaoTime().stream()//usando o metodo strem para mapear a composicaoTime
+                .map(comp -> comp.getIntegrante().getNome()) // Mapeia para o nome dos jogadores
+                .collect(Collectors.toList());
 
-		return nomesJogadores;
+        return nomesJogadores;
 	}
 
 	//Vai retornar a função mais comum nos times dentro do período
@@ -114,7 +116,10 @@ public class ApiService {
 		}
 		return funcao.entrySet().stream()
 				.max(Map.Entry.comparingByValue()) //busca a função que apareceu mais vezes
-				.get().getKey(); // retorna a chave key do que o parametro acima busca
+				.map(Map.Entry::getKey) // retorna a chave key do que o parametro acima busca
+				.orElse("Vazio");// Valor padrão caso não haja valor
+
+
 	}
 
 	// Vai retornar o nome da Franquia mais comum nos times dentro do período
@@ -180,16 +185,12 @@ public class ApiService {
 	// Vai retornar o número (quantidade) de Funções dentro do período
 
 	public Map<String, Long> contagemPorFuncao(LocalDate dataInicial, LocalDate dataFinal, List<Time> todosOsTimes) {
-		if (todosOsTimes == null || todosOsTimes.isEmpty()) {
-			return Collections.emptyMap(); // Retorna mapa nulo
-		}
-
-		Map<String, Long> contFuncoes = todosOsTimes.stream()
-				.filter(time -> !time.getData().isBefore(dataInicial) && !time.getData().isAfter(dataFinal)) // Filtra os times dentro do período
-				.flatMap(time -> time.getComposicaoTime().stream()) // Achata a lista de composição dos times
-				.map(composicaoTime -> composicaoTime.getIntegrante().getFuncao()) // Mapeia para a função do jogador
-				.collect(Collectors.groupingBy(funcao -> funcao, Collectors.counting())); // Conta a função de cada
-
-		return contFuncoes;
+		return todosOsTimes.stream()
+				.filter(time -> (dataInicial == null || !time.getData().isBefore(dataInicial)) &&
+						(dataFinal == null || !time.getData().isAfter(dataFinal)))
+				.flatMap(time -> time.getComposicaoTime().stream())
+				.map(composicao -> composicao.getIntegrante().getFuncao())
+				.collect(Collectors.groupingBy(funcao -> funcao, Collectors.counting()));
 	}
+
 }
