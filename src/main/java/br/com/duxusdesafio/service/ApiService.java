@@ -27,41 +27,41 @@ public class ApiService {
 					jogadores.add(composicao.getIntegrante().getNome()); /* Adicionando o atributo nome dentro da lista de composição a lista jogadores */
 
 				}
-				break;
+				return jogadores;
 			}
 		}
-		return jogadores.isEmpty() ? Collections.emptyList() : jogadores; // Retornando o meu metodo que é uma lista com os integrantes do time daquela data
+		return Collections.emptyList();
 
 	}
 
 	// Retornar o integrante que tiver presente na maior quantidade de times dentro do período
-	
-	public Integrante integranteMaisUsado(LocalDate dataInicial, LocalDate dataFinal, List<Time> todosOsTimes) {
-		HashMap<Integrante,Integer> contagem = new HashMap<>();
-		for (Time time : todosOsTimes) {
-			 if (!time.getData().isBefore(dataInicial) && !time.getData().isAfter(dataFinal)) {
-				 for (ComposicaoTime composicao : time.getComposicaoTime()) {/* Acessando todos obj retornados pelo getComposicaoTime e alocando no composicao*/
-		                Integrante jogador = composicao.getIntegrante();
-		               contagem.put(jogador, contagem.getOrDefault(jogador,0) + 1); /* Na contagem está adicionando o jogador partindo do zero */
-				 }
-			 }
-		}
-        Integrante jogadorMaispresente = null; //Criando variavel do tipo Integrante pra verificar o jogador, iniciado com null porque seu tipo tem que armazenar o jogador obj e nao o numero.
-		int jogadorContagem =0;
 
-        for (Map.Entry<Integrante, Integer > entry : contagem.entrySet()) {// no mapa estou acessando a chave e o valor com o metodo Entryset que faz parte do hashmap
-            if(entry.getValue()> jogadorContagem){//se qualquer valor for atribuito a contagem que no caso é 0. entao toda entrando sendo maior q o padrao  fara.
-                jogadorMaispresente = entry.getKey();//variavel instanciada recebe o jogador ou seja a key e atualiza o jogador mais presente
+	public Integrante integranteMaisUsado(LocalDate dataInicial, LocalDate dataFinal, List<Time> todosOsTimes) {
+		HashMap<Integrante, Integer> contagem = new HashMap<>();
+		for (Time time : todosOsTimes) {
+			if (!time.getData().isBefore(dataInicial) && !time.getData().isAfter(dataFinal)) {
+				for (ComposicaoTime composicao : time.getComposicaoTime()) {/* Acessando todos obj retornados pelo getComposicaoTime e alocando no composicao*/
+					Integrante jogador = composicao.getIntegrante();
+					contagem.put(jogador, contagem.getOrDefault(jogador, 0) + 1); /* Na contagem está adicionando o jogador partindo do zero */
+				}
+			}
+		}
+		Integrante jogadorMaispresente = null; //Criando variavel do tipo Integrante pra verificar o jogador, iniciado com null porque seu tipo tem que armazenar o jogador obj e nao o numero.
+		int jogadorContagem = 0;
+
+		for (Map.Entry<Integrante, Integer> entry : contagem.entrySet()) {// no mapa estou acessando a chave e o valor com o metodo Entryset que faz parte do hashmap
+			if (entry.getValue() > jogadorContagem) {//se qualquer valor for atribuito a contagem que no caso é 0. entao toda entrando sendo maior q o padrao  fara.
+				jogadorMaispresente = entry.getKey();//variavel instanciada recebe o jogador ou seja a key e atualiza o jogador mais presente
 				jogadorContagem = entry.getValue(); // atualizando a contagem de jogadores mais presente
-            }
-        }
-        return jogadorMaispresente;//retornando o jogador mais presente
+			}
+		}
+		return jogadorMaispresente;//retornando o jogador mais presente
 	}
 
 	//Vai retornar uma lista com os nomes dos integrantes do time mais comum dentro do período
 
 	public List<String> timeMaisComum(LocalDate dataInicial, LocalDate dataFinal, List<Time> todosOsTimes) {
- 			//verficando o sistema caso seja nulo ou vazio as informações
+		//verficando o sistema caso seja nulo ou vazio as informações
 		if (todosOsTimes == null || todosOsTimes.isEmpty()) {
 			return Collections.emptyList(); // Retorna lista vazia se não houver times
 		}
@@ -92,18 +92,14 @@ public class ApiService {
 				.map(comp -> comp.getIntegrante().getNome()) // Mapeia para o nome dos jogadores
 				.collect(Collectors.toList()); // Coleta os nomes em uma lista por padrao
 
-        return nomesJogadores;
-    }
+		return nomesJogadores;
+	}
 
 	//Vai retornar a função mais comum nos times dentro do período
 
 	public String funcaoMaisComum(LocalDate dataInicial, LocalDate dataFinal, List<Time> todosOsTimes) {
 
 		HashMap<String, Integer> funcao = new HashMap<>();
-
-		if (funcao.isEmpty()) {
-			return Collections.emptyList().toString(); // Retorna lista vazia se não houver funcoes
-		}
 
 
 		for (Time time : todosOsTimes) {
@@ -131,11 +127,11 @@ public class ApiService {
 
 		HashMap<String, Integer> franquias = new HashMap<>();
 
-		for(Time time : todosOsTimes){
+		for (Time time : todosOsTimes) {
 			if (time.getData().isAfter(dataInicial) && time.getData().isBefore(dataFinal)) {
 				for (ComposicaoTime composicao : time.getComposicaoTime()) {
 					String franquia = composicao.getIntegrante().getFranquia();
-					franquias.put(franquia,franquias.getOrDefault(franquia, 0) + 1);
+					franquias.put(franquia, franquias.getOrDefault(franquia, 0) + 1);
 				}
 			}
 		}
@@ -145,9 +141,9 @@ public class ApiService {
 		}
 
 		String franquiaMaisComum = null;
-		int franquiaContagem =0;
+		int franquiaContagem = 0;
 
-		for (Map.Entry<String,Integer> entry : franquias.entrySet()) {// no mapa estou acessando a chave e o valor com o metodo Entryset que faz parte do hashmap
+		for (Map.Entry<String, Integer> entry : franquias.entrySet()) {// no mapa estou acessando a chave e o valor com o metodo Entryset que faz parte do hashmap
 			if (entry.getValue() > franquiaContagem) {//se qualquer valor for atribuito a framquiaContagem que no caso é 0. entao toda entrando sendo maior..
 				franquiaMaisComum = entry.getKey();//variavel instanciada recebe a franquia mais comum ou seja a key e atualiza
 				franquiaContagem = entry.getValue(); // atualizando a contagem de times mais comum
@@ -171,23 +167,29 @@ public class ApiService {
 				.collect(Collectors.groupingBy(franquia -> franquia, Collectors.counting())); // passando para as franquia a contagem
 
 
-
 		return contFranquias.entrySet().stream()// verificando em contFranquias a maior
 				.max(Map.Entry.comparingByValue()) // Encontra a franquia com maior número de jogadores
-				.map(entry -> { Map<String, Long> resulFranquias = new HashMap<>();// Criando um novo mapa com a franquia mais comum
+				.map(entry -> {
+					Map<String, Long> resulFranquias = new HashMap<>();// Criando um novo mapa com a franquia mais comum
 					resulFranquias.put(entry.getKey(), entry.getValue()); // adicionando  a KEY E VALUE no resul
 					return resulFranquias;
 				}).orElse(Collections.emptyMap()); // .orElse significa CASO NÃO! neste caso me retorna o um map vazio
 
 	}
 
+	// Vai retornar o número (quantidade) de Funções dentro do período
 
-	/**
-	 * Vai retornar o número (quantidade) de Funções dentro do período
-	 */
 	public Map<String, Long> contagemPorFuncao(LocalDate dataInicial, LocalDate dataFinal, List<Time> todosOsTimes) {
-		// TODO Implementar método seguindo as instruções!
-		return null;
-	}
+		if (todosOsTimes == null || todosOsTimes.isEmpty()) {
+			return Collections.emptyMap(); // Retorna mapa nulo
+		}
 
+		Map<String, Long> contFuncoes = todosOsTimes.stream()
+				.filter(time -> !time.getData().isBefore(dataInicial) && !time.getData().isAfter(dataFinal)) // Filtra os times dentro do período
+				.flatMap(time -> time.getComposicaoTime().stream()) // Achata a lista de composição dos times
+				.map(composicaoTime -> composicaoTime.getIntegrante().getFuncao()) // Mapeia para a função do jogador
+				.collect(Collectors.groupingBy(funcao -> funcao, Collectors.counting())); // Conta a função de cada
+
+		return contFuncoes;
+	}
 }
